@@ -38,5 +38,5 @@ public class Catalog {
   public String describedBy;
   
   @JsonProperty(required = true)
-  public Dataset [] dataset;
+  public Iterable<Dataset> dataset;
 }
