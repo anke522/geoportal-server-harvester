@@ -18,16 +18,49 @@ package com.esri.geoportal.commons.meta.util;
 import com.esri.geoportal.commons.meta.MapAttribute;
 import com.esri.geoportal.commons.meta.MetaAnalyzer;
 import com.esri.geoportal.commons.meta.MetaException;
+import com.esri.geoportal.commons.meta.xml.SimpleDcMetaAnalyzer;
+import com.esri.geoportal.commons.meta.xml.SimpleFgdcMetaAnalyzer;
+import com.esri.geoportal.commons.meta.xml.SimpleIso15115MetaAnalyzer;
+import com.esri.geoportal.commons.meta.xml.SimpleIso15115_2MetaAnalyzer;
+import com.esri.geoportal.commons.meta.xml.SimpleIso15119MetaAnalyzer;
 import java.util.Arrays;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 /**
  * Multi meta analyzer wrapper;
  */
 public class MultiMetaAnalyzerWrapper implements MetaAnalyzer {
-  private final List<MetaAnalyzer> analyzers;
+  private static final Logger LOG = LoggerFactory.getLogger(MultiMetaAnalyzerWrapper.class);
+  private static MultiMetaAnalyzerWrapper defaultAnalyzer = null;
+  
+  static {
+    try {
+      defaultAnalyzer = new MultiMetaAnalyzerWrapper(
+         new SimpleDcMetaAnalyzer(),
+         new SimpleFgdcMetaAnalyzer(),
+         new SimpleIso15115MetaAnalyzer(),
+         new SimpleIso15115_2MetaAnalyzer(),
+         new SimpleIso15119MetaAnalyzer()
+      );
+    } catch (Exception ex) {
+      defaultAnalyzer = null;
+      LOG.warn("Error creating default MultiMetaAnalyzer.", ex);
+    }
+  }
 
+  private final List<MetaAnalyzer> analyzers;
+  
+  /**
+   * Gets default analyzer.
+   * @return default analyzer
+   */
+  public static MetaAnalyzer getDefault() {
+    return defaultAnalyzer;
+  }
+  
   /**
    * Creates instance of the wrapper.
    * @param analyzers list of analyzers
