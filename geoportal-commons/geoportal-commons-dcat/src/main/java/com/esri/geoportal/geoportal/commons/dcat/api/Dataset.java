@@ -15,14 +15,19 @@
  */
 package com.esri.geoportal.geoportal.commons.dcat.api;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Dataset.
  */
+@JsonInclude(value = JsonInclude.Include.NON_NULL)
 public class Dataset {
   @JsonProperty(value = "@type")
   public String type;
+  
+  @JsonProperty(required = true)
+  public AccessLevel accessLevel;
   
   @JsonProperty(required = true)
   public String title;
@@ -34,5 +39,49 @@ public class Dataset {
   public String [] keyword;
   
   @JsonProperty(required = true)
-  public String modified;
+  public IsoDate modified;
+  
+  @JsonProperty(required = true)
+  public Publisher publisher;
+  
+  @JsonProperty(required = true)
+  public String identifier;
+  
+  @JsonProperty(required = true)
+  public String [] bureauCode;
+  
+  public String license;
+  
+  public String rights;
+  
+  public String spatial;
+  
+  public IsoDuration accrualPeriodicity;
+  
+  @JsonProperty(required = true)
+  public String [] programCode;
+  
+  public String conformsTo;
+  
+  public Boolean dataQuality;
+  
+  public String describedBy;
+  
+  public String describedByType;
+  
+  public String isPartOf;
+  
+  public IsoDate issued;
+  
+  public String language;
+  
+  public String landingPage;
+  
+  public String primaryITInvestmentUII;
+  
+  public String [] references;
+  
+  public String systemOfRecords;
+  
+  public String [] theme;
 }

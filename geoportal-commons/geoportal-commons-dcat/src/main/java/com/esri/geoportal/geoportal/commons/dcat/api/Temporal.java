@@ -15,28 +15,20 @@
  */
 package com.esri.geoportal.geoportal.commons.dcat.api;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
- * Catalog top level placeholder.
+ * Temporal
  */
-@JsonInclude(value = JsonInclude.Include.NON_NULL)
-public class Catalog {
-  @JsonProperty(value = "@context")
-  public String context;
+public class Temporal {
+  private final IsoDate from;
+  private final IsoDate to;
+
+  public Temporal(IsoDate from, IsoDate to) {
+    this.from = from;
+    this.to = to;
+  }
   
-  @JsonProperty(value = "@id")
-  public String id;
-  
-  @JsonProperty(value = "@type")
-  public String type;
-  
-  @JsonProperty(required = true, defaultValue = "https://project-open-data.cio.gov/v1.1/schema")
-  public String conformsTo;
-  
-  public String describedBy;
-  
-  @JsonProperty(required = true)
-  public Dataset [] dataset;
+  @Override
+  public String toString() {
+    return String.format("%s/%s", from, to);
+  }
 }

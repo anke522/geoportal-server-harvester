@@ -15,28 +15,27 @@
  */
 package com.esri.geoportal.geoportal.commons.dcat.api;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 /**
- * Catalog top level placeholder.
+ * Iso date.
  */
-@JsonInclude(value = JsonInclude.Include.NON_NULL)
-public class Catalog {
-  @JsonProperty(value = "@context")
-  public String context;
+public class IsoDate {
+  private final ZonedDateTime instant;
   
-  @JsonProperty(value = "@id")
-  public String id;
+  public IsoDate(ZonedDateTime instant) {
+    this.instant = instant;
+  }
   
-  @JsonProperty(value = "@type")
-  public String type;
+  public IsoDate(Date date) {
+    this.instant = ZonedDateTime.ofInstant(date.toInstant(),ZoneId.systemDefault());
+  }
   
-  @JsonProperty(required = true, defaultValue = "https://project-open-data.cio.gov/v1.1/schema")
-  public String conformsTo;
-  
-  public String describedBy;
-  
-  @JsonProperty(required = true)
-  public Dataset [] dataset;
+  @Override
+  public String toString() {
+    return instant!=null? instant.format(DateTimeFormatter.ISO_INSTANT): null;
+  }
 }

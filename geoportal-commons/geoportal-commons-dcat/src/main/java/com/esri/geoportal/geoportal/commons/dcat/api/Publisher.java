@@ -19,24 +19,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Catalog top level placeholder.
+ * Publisher.
  */
 @JsonInclude(value = JsonInclude.Include.NON_NULL)
-public class Catalog {
-  @JsonProperty(value = "@context")
-  public String context;
-  
-  @JsonProperty(value = "@id")
-  public String id;
-  
-  @JsonProperty(value = "@type")
+public class Publisher {
+  @JsonProperty(value = "@type", defaultValue = "org:Organization")
   public String type;
-  
-  @JsonProperty(required = true, defaultValue = "https://project-open-data.cio.gov/v1.1/schema")
-  public String conformsTo;
-  
-  public String describedBy;
-  
-  @JsonProperty(required = true)
-  public Dataset [] dataset;
+  public String name;
+  public Publisher subOrganizationOf;
 }

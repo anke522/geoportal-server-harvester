@@ -15,9 +15,19 @@
  */
 package com.esri.geoportal.geoportal.commons.dcat.api;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Contact point.
  */
+@JsonInclude(value = JsonInclude.Include.NON_NULL)
 public class ContactPoint {
+  @JsonProperty(value = "@type", defaultValue = "vcard:Contact")
+  public String type;
   
+  @JsonProperty(required = true)
+  public String fn;
+  
+  public Email hasEmail;
 }

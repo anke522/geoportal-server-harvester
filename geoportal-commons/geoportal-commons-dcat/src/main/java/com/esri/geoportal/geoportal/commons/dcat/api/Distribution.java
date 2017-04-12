@@ -15,9 +15,32 @@
  */
 package com.esri.geoportal.geoportal.commons.dcat.api;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Distribution.
  */
+@JsonInclude(value = JsonInclude.Include.NON_NULL)
 public class Distribution {
+  @JsonProperty(value = "@type", defaultValue = "dcat:Distribution")
+  public String type;
   
+  public String accessURL;
+  
+  public String conformsTo;
+  
+  public String downloadURL;
+  
+  public String describedBy;
+  
+  public String describedByType;
+  
+  public String description;
+  
+  public String format;
+  
+  public String mediaType;
+  
+  public String title;
 }
