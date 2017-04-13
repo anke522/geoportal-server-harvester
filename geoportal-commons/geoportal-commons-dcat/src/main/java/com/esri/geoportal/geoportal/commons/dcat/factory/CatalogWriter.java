@@ -23,12 +23,9 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.util.Arrays;
 
 /**
  * Catalog writer.
@@ -50,6 +47,8 @@ public class CatalogWriter implements Closeable {
     
     if (catalog.type!=null)
       gen.writeStringField("@type", catalog.type);
+    else 
+      gen.writeStringField("@type", "dcat:Catalog");
     
     if (catalog.context!=null)
       gen.writeStringField("@context", catalog.context);
@@ -57,11 +56,10 @@ public class CatalogWriter implements Closeable {
     if (catalog.id!=null)
       gen.writeStringField("@id", catalog.id);
     
-    if (catalog.conformsTo==null){
-      throw new IOException("Error generating DCAT: no conformsTo");
-    }
-    
-    gen.writeStringField("conformsTo", catalog.conformsTo);
+    if (catalog.conformsTo!=null)
+      gen.writeStringField("conformsTo", catalog.conformsTo);
+    else
+      gen.writeStringField("conformsTo", "https://project-open-data.cio.gov/v1.1/schema");
     
     if (catalog.describedBy!=null)
       gen.writeStringField("describedBy", catalog.describedBy);

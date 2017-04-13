@@ -15,6 +15,7 @@
  */
 package com.esri.geoportal.geoportal.commons.dcat.factory;
 
+import com.esri.geoportal.commons.meta.Attribute;
 import com.esri.geoportal.commons.meta.MapAttribute;
 import com.esri.geoportal.commons.meta.MetaAnalyzer;
 import com.esri.geoportal.commons.meta.MetaException;
@@ -30,7 +31,7 @@ public class DatasetFactory {
   
   private final Map<String,String> defaults;
   private final MetaAnalyzer metaAnalyzer;
-
+  
   public DatasetFactory(Map<String,String> defaults, MetaAnalyzer metaAnalyzer) {
     this.defaults = defaults;
     this.metaAnalyzer = metaAnalyzer;
@@ -41,8 +42,16 @@ public class DatasetFactory {
   }
   
   public Dataset createDataset(Document xml) throws MetaException {
-    MapAttribute attributes = metaAnalyzer.extract(xml);
+    MapAttribute allAttr = metaAnalyzer.extract(xml);
+    Map<String, Attribute> attr = allAttr.getNamedAttributes();
+    
     Dataset dataset = new Dataset();
+    
+    dataset.type = "dcat:Dataset";
+    dataset.identifier = attr.get("identifier").getValue();
+    dataset.title = attr.get("title").getValue();
+    dataset.description = attr.get("description").getValue();
+    
     return dataset;
   }
 }
