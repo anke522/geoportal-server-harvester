@@ -8,6 +8,7 @@
     </parent>
     <artifactId>geoportal-harvester-gpt</artifactId>
     <name>Esri :: Geoportal Server :: Harvester :: Data Publisher :: Geoportal Rest</name>
+    <description>Outbound adaptor for Geoportal Server 2.x.x capable of publishing data through Geoportal REST end point.</description>
     <packaging>jar</packaging>
     <dependencies>
         <dependency>
@@ -18,6 +19,11 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>geoportal-commons-gpt-client</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>geoportal-commons-geometry</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

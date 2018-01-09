@@ -21,6 +21,7 @@ import com.esri.geoportal.commons.gpt.client.EntryRef;
 import com.esri.geoportal.commons.http.BotsHttpClient;
 import com.esri.geoportal.commons.robots.Bots;
 import com.esri.geoportal.commons.robots.BotsUtils;
+import com.esri.geoportal.geoportal.commons.geometry.GeometryService;
 import com.esri.geoportal.harvester.api.DataReference;
 import com.esri.geoportal.harvester.api.base.SimpleDataReference;
 import com.esri.geoportal.harvester.api.defs.EntityDefinition;
@@ -29,9 +30,12 @@ import com.esri.geoportal.harvester.api.ex.DataProcessorException;
 import com.esri.geoportal.harvester.api.specs.InputBroker;
 import com.esri.geoportal.harvester.api.specs.InputConnector;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.List;
+import java.util.logging.Level;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
@@ -56,12 +60,17 @@ import org.slf4j.LoggerFactory;
   @Override
   public void initialize(InitContext context) throws DataProcessorException {
     definition.override(context.getParams());
-    CloseableHttpClient httpclient = HttpClientBuilder.create().build();
-    if (context.getTask().getTaskDefinition().isIgnoreRobotsTxt()) {
-      client = new Client(httpclient, definition.getHostUrl(), definition.getCredentials(), definition.getIndex());
-    } else {
-      Bots bots = BotsUtils.readBots(definition.getBotsConfig(), httpclient, definition.getHostUrl());
-      client = new Client(new BotsHttpClient(httpclient,bots), definition.getHostUrl(), definition.getCredentials(), definition.getIndex());
+    CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+    try {
+      GeometryService gs = new GeometryService(httpClient, new URL(connector.geometryServiceUrl));
+      if (context.getTask().getTaskDefinition().isIgnoreRobotsTxt()) {
+        client = new Client(httpClient, gs, definition.getHostUrl(), definition.getCredentials(), definition.getIndex());
+      } else {
+        Bots bots = BotsUtils.readBots(definition.getBotsConfig(), httpClient, definition.getHostUrl());
+        client = new Client(new BotsHttpClient(httpClient,bots), gs, definition.getHostUrl(), definition.getCredentials(), definition.getIndex());
+      }
+    } catch (MalformedURLException ex) {
+      throw new DataProcessorException(String.format("Invalid geometry service url: %s", connector.geometryServiceUrl), ex);
     }
   }
 
@@ -126,23 +135,39 @@ import org.slf4j.LoggerFactory;
       }
       String id = iter.next();
       try {
-        String xml = client.readXml(id);
-        String json = client.readJson(id);
+        String xml;
+        String json;
         
         EntryRef entryRef = client.readItem(id);
         SimpleDataReference ref = new SimpleDataReference(getBrokerUri(), getEntityDefinition().getLabel(), entryRef.getId(), entryRef.getLastModified(), entryRef.getSourceUri());
         
-        if (xml!=null && definition.getEmitXml()) {
+        if (definition.getEmitXml() && (xml = readXml(id))!=null) {
           ref.addContext(MimeType.APPLICATION_XML, xml.getBytes("UTF-8"));
         }
         
-        if (json!=null && definition.getEmitJson()) {
+        if (definition.getEmitJson() && (json = readJson(id))!=null) {
           ref.addContext(MimeType.APPLICATION_JSON, json.getBytes("UTF-8"));
         }
         
         return ref;
       } catch (URISyntaxException|IOException ex) {
         throw new DataInputException(GptBroker.this, String.format("Error iterating through Geoportal Server 2.0 records."), ex);
+      }
+    }
+    
+    private String readXml(String id) {
+      try {
+        return client.readXml(id);
+      } catch (URISyntaxException|IOException ex) {
+        return null;
+      }
+    }
+    
+    private String readJson(String id) {
+      try {
+        return client.readJson(id);
+      } catch (URISyntaxException|IOException ex) {
+        return null;
       }
     }
     

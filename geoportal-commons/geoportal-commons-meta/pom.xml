@@ -8,12 +8,18 @@
     </parent>
     <artifactId>geoportal-commons-meta</artifactId>
     <name>Esri :: Geoportal Server :: Commons :: Meta</name>
+    <description>Minimal implementation of metadata parsing and creating.</description>
     <packaging>jar</packaging>
     <dependencies>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.5</version>
+            <version>3.6</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>commons-utils</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
